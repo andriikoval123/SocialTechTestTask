@@ -67,13 +67,17 @@ def get_ids_by_dates(data):
 
     for row in data:
         key = row[2].split()[0]
-        value = ids_by_dates.get(key)
-        if value is None:
-            value = []
-        value.append(row[0])
-        ids_by_dates[key] = value
+        append_by_key(ids_by_dates, key, row[0])
 
     return ids_by_dates
+
+
+def append_by_key(source, key, value):
+    v = source.get(key)
+    if v is None:
+        v = []
+    v.append(value)
+    source[key] = v
 
 
 _file_name = "AB_test_rawdata.csv"
@@ -81,16 +85,15 @@ _file_name = "AB_test_rawdata.csv"
 _data = read_data_from_csv(_file_name)
 _ids_by_dates = dict(sorted(get_ids_by_dates(_data).items()))
 
-_testing_ids_by_date = copy.deepcopy(_ids_by_dates)
-_non_testing_ids_by_date = copy.deepcopy(_ids_by_dates)
+_testing_ids_by_date = {}
+_non_testing_ids_by_date = {}
 
 for key in _ids_by_dates:
     for id in _ids_by_dates.get(key):
         if int(id) % 2 == 0:
-            _testing_ids_by_date.get(key).remove(id)
+            append_by_key(_non_testing_ids_by_date, key, id)
         else:
-            _non_testing_ids_by_date.get(key).remove(id)
-
+            append_by_key(_testing_ids_by_date, key, id)
 
 _average_testing_likes_by_date = {}
 _average_non_testing_likes_by_date = {}
