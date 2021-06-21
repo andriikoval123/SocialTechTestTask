@@ -59,7 +59,7 @@ def read_data_from_csv(file_name):
             if not after_test_begin(row):
                 data.append(row)
 
-    return data[1:10000]
+    return data[1:]
 
 
 def get_ids_by_dates(data):
